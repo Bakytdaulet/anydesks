@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qulpynai Network Access</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #fff5f7;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background: #b0234e;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.6em;
+      font-weight: bold;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      background: #f1dde2;
+      padding: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 6px 16px;
+      background: white;
+      color: #b0234e;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid #b0234e;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .tab.active {
+      background: #b0234e;
+      color: white;
+    }
+
+    .shop-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 15px auto;
+      max-width: 900px;
+    }
+
+    .shop-tab {
+      background: white;
+      border: 1px solid #b0234e;
+      color: #b0234e;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .shop-tab:hover, .shop-tab.active {
+      background: #b0234e;
+      color: white;
+    }
+
+    .search-bar {
+      text-align: center;
+      margin: 10px auto 0;
+    }
+
+    .search-bar input {
+      width: 80%;
+      max-width: 500px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid #b0234e;
+      outline: none;
+      font-size: 1em;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      padding: 0 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .card h3 {
+      color: #b0234e;
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+
+    .cashier {
+      background: #fff8fa;
+      border-radius: 8px;
+      margin: 8px 0;
+      padding: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .cashier h4 {
+      margin: 0;
+      font-size: 0.9em;
+      color: #b0234e;
+    }
+
+    .cashier p {
+      margin: 3px 0;
+      font-size: 0.85em;
+      color: #555;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #b0234e;
+      color: white;
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 0.8em;
+      font-weight: 500;
+      margin-top: 5px;
+      transition: background 0.2s ease;
+    }
+
+    .btn:hover {
+      background: #8f1e43;
+    }
+
+    .content {
+      display: none;
+    }
+    .content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Qulpynai Network Access</header>
+
+  <div class="tabs">
+    <div class="tab" data-target="office">🏢 Офис</div>
+    <div class="tab" data-target="factory">🏭 Цех</div>
+    <div class="tab active" data-target="shops">🏪 Магазины</div>
+  </div>
+
+  <div id="office" class="content">
+    <p style="text-align:center;color:#777;margin:20px;">Пока пусто — добавишь позже.</p>
+  </div>
+
+  <div id="factory" class="content">
+    <p style="text-align:center;color:#777;margin:20px;">Пока пусто — добавишь позже.</p>
+  </div>
+
+  <div id="shops" class="content active">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="🔍 Поиск по кассе, магазину или ID...">
+    </div>
+    <div class="shop-tabs" id="shopTabs"></div>
+    <div class="container" id="shopCards"></div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.content');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.target).classList.add('active');
+      });
+    });
+
+    const shops = {
+      Q1: [
+        { name: "Касса 1", id: "1949439214" },
+        { name: "Касса 2", id: "859379561" }
+      ],
+      Q3: [
+        { name: "Касса 1", id: "733967821" },
+        { name: "Касса 2", id: "337391878" }
+      ],
+      Q4: [
+        { name: "Касса 1", id: "1482392525" },
+        { name: "Касса 2", id: "1304973206" }
+      ],
+      Q5: [
+        { name: "Касса 1", id: "777710749" },
+        { name: "Касса 2", id: "1574065636" }
+      ],
+      Q6: [
+        { name: "Касса 1", id: "471765610" }
+      ],
+      Q7: [
+        { name: "Касса 1", id: "1656565211" },
+        { name: "Касса 2", id: "1417841045" }
+      ],
+      Q8: [
+        { name: "Касса 1", id: "925108290" },
+        { name: "Касса 2", id: "1832237966" }
+      ],
+      Q9: [
+        { name: "Касса 1", id: "1924307583" },
+        { name: "Касса 2", id: "1327344045" }
+      ]
+    };
+
+    const shopTabs = document.getElementById("shopTabs");
+    const shopCards = document.getElementById("shopCards");
+    const searchInput = document.getElementById("searchInput");
+
+    Object.keys(shops).forEach((q, i) => {
+      const tab = document.createElement("div");
+      tab.textContent = q;
+      tab.className = "shop-tab" + (i === 0 ? " active" : "");
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".shop-tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        renderCards(q);
+      });
+      shopTabs.appendChild(tab);
+    });
+
+    function renderCards(q) {
+      shopCards.innerHTML = "";
+      shops[q].forEach(cash => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h3>${q}</h3>
+          <div class="cashier">
+            <h4>${cash.name}</h4>
+            <p>ID: ${cash.id}</p>
+            <p>Пароль: ITQany@#</p>
+            <a class="btn" href="anydesk://${cash.id}">Подключиться</a>
+          </div>
+        `;
+        shopCards.appendChild(div);
+      });
+    }
+
+    function renderAllCards() {
+      shopCards.innerHTML = "";
+      Object.keys(shops).forEach(q => {
+        shops[q].forEach(cash => {
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `
+            <h3>${q}</h3>
+            <div class="cashier">
+              <h4>${cash.name}</h4>
+              <p>ID: ${cash.id}</p>
+              <p>Пароль: ITQany@#</p>
+              <a class="btn" href="anydesk://${cash.id}">Подключиться</a>
+            </div>
+          `;
+          shopCards.appendChild(div);
+        });
+      });
+    }
+
+    searchInput.addEventListener("input", e => {
+      const term = e.target.value.toLowerCase();
+      if (!term) {
+        const active = document.querySelector(".shop-tab.active");
+        renderCards(active.textContent);
+        return;
+      }
+
+      shopCards.innerHTML = "";
+      Object.keys(shops).forEach(q => {
+        shops[q].forEach(cash => {
+          if (
+            q.toLowerCase().includes(term) ||
+            cash.name.toLowerCase().includes(term) ||
+            cash.id.includes(term)
+          ) {
+            const div = document.createElement("div");
+            div.className = "card";
+            div.innerHTML = `
+              <h3>${q}</h3>
+              <div class="cashier">
+                <h4>${cash.name}</h4>
+                <p>ID: ${cash.id}</p>
+                <p>Пароль: ITQany@#</p>
+                <a class="btn" href="anydesk://${cash.id}">Подключиться</a>
+              </div>
+            `;
+            shopCards.appendChild(div);
+          }
+        });
+      });
+    });
+
+    renderCards("Q1");
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qulpynai Network Access</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #fdf7f8;
+      margin: 0;
+      color: #333;
+    }
+
+    header {
+      background: #b0234e;
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      background: #f1dde2;
+      padding: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 6px 16px;
+      background: white;
+      color: #b0234e;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid #b0234e;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .tab.active {
+      background: #b0234e;
+      color: white;
+    }
+
+    .tab:hover {
+      background: #b0234e;
+      color: white;
+    }
+
+    .search-container {
+      text-align: center;
+      margin: 15px;
+    }
+
+    .search-input {
+      width: 90%;
+      max-width: 400px;
+      padding: 8px 12px;
+      border: 2px solid #b0234e;
+      border-radius: 8px;
+      outline: none;
+      font-size: 1em;
+    }
+
+    .content {
+      display: none;
+      max-width: 1100px;
+      margin: 0 auto 30px;
+      padding: 0 15px;
+    }
+
+    .content.active {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      padding: 10px 14px;
+      line-height: 1.3;
+      background: white;
+      transition: 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+    .card h3 {
+      margin: 0;
+      text-align: center;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+
+    .addr {
+      text-align: center;
+      font-size: 0.85em;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .cash {
+      background: #fdf2f4;
+      border-radius: 8px;
+      padding: 6px 8px;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .cash strong {
+      color: #b0234e;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #b0234e;
+      color: white;
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      margin-top: 4px;
+    }
+
+    .btn:hover {
+      background: #8f1e43;
+    }
+
+    /* Разные цвета для карточек */
+    .card:nth-child(6n+1) { border-top: 4px solid #b0234e; }
+    .card:nth-child(6n+2) { border-top: 4px solid #d36a00; }
+    .card:nth-child(6n+3) { border-top: 4px solid #00897b; }
+    .card:nth-child(6n+4) { border-top: 4px solid #5e35b1; }
+    .card:nth-child(6n+5) { border-top: 4px solid #1976d2; }
+    .card:nth-child(6n+6) { border-top: 4px solid #388e3c; }
+  </style>
+</head>
+<body>
+  <header>Qulpynai Network Access</header>
+
+  <div class="tabs">
+    <div class="tab" data-target="office">🏢 Офис</div>
+    <div class="tab" data-target="factory">🏭 Цех</div>
+    <div class="tab active" data-target="shops">🏪 Магазины</div>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search" class="search-input" placeholder="Поиск по названию (например Q10)">
+  </div>
+
+  <div id="office" class="content">
+    <p style="grid-column:1/-1;text-align:center;color:#777;">Пока пусто — добавишь позже.</p>
+  </div>
+
+  <div id="factory" class="content">
+    <p style="grid-column:1/-1;text-align:center;color:#777;">Пока пусто — добавишь позже.</p>
+  </div>
+
+  <div id="shops" class="content active">
+    <!-- Пример карточек магазинов -->
+    <div class="card"><h3>Q1</h3><div class="addr">Улица Саяна Шаймерденова, 29</div>
+      <div class="cash"><strong>Касса 1</strong><br>ID: 1949439214<br>Пароль: ITQany@#<br><a href="anydesk://1949439214" class="btn">Подключиться</a></div>
+      <div class="cash"><strong>Касса 2</strong><br>ID: 859379561<br>Пароль: ITQany@#<br><a href="anydesk://859379561" class="btn">Подключиться</a></div>
+    </div>
+
+    <div class="card"><h3>Q2</h3><div class="addr"></div></div>
+    <div class="card"><h3>Q3</h3><div class="addr">Аксай-5 микрорайон, 25</div></div>
+    <div class="card"><h3>Q4</h3><div class="addr">Микрорайон 3-й, 20а</div></div>
+    <div class="card"><h3>Q5</h3><div class="addr">Улица Толе би, 75</div></div>
+    <div class="card"><h3>Q6</h3><div class="addr">Улица Сыргабекова, 22Б</div></div>
+    <div class="card"><h3>Q7</h3><div class="addr">Улица Розыбакиева, 320</div></div>
+    <div class="card"><h3>Q8</h3><div class="addr">Улица Егинсу, 29/12</div></div>
+    <div class="card"><h3>Q9</h3><div class="addr">ТРЦ SPUTNIK mall, Мамыр-1 микрорайон, 8а</div></div>
+    <div class="card"><h3>Q10</h3><div class="addr">ЖК Alma City, улица Жунисова, 8/11</div></div>
+    <div class="card"><h3>Q11</h3><div class="addr">Улица Есил, 5а</div></div>
+    <div class="card"><h3>Q12</h3><div class="addr">Рынок Алатау, пос. Боралдай, ул. Алатау, 2д</div></div>
+    <div class="card"><h3>Q13</h3><div class="addr">Айнабулак микрорайон, 9а</div></div>
+    <div class="card"><h3>Q14</h3><div class="addr">Таусамалы микрорайон, 98</div></div>
+    <div class="card"><h3>Q15</h3><div class="addr">Улица Вишнёвая, 16/2</div></div>
+    <div class="card"><h3>Q16</h3><div class="addr">Улица Шолохова, 2</div></div>
+    <div class="card"><h3>Q17</h3><div class="addr">Улица Розыбакиева, 75</div></div>
+    <div class="card"><h3>Q18</h3><div class="addr">Жетысу-3 микрорайон, 24</div></div>
+    <div class="card"><h3>Q19</h3><div class="addr">Улица Жансугурова, 159, с. Отеген Батыра</div></div>
+    <div class="card"><h3>Q20</h3><div class="addr">ЖК Assem plaza, улица Толе би, 181</div></div>
+    <div class="card"><h3>Q21</h3><div class="addr">ЖК Дом на Абая, проспект Гагарина, 124</div></div>
+    <div class="card"><h3>Q22</h3><div class="addr">Улица Аккайын, 2/1</div></div>
+    <div class="card"><h3>Q23</h3><div class="addr">Улица Кисикова, 42а, Каскелен</div></div>
+    <div class="card"><h3>Q24</h3><div class="addr">МФК RAMSTORE ALL IN, проспект Назарбаева, 226</div></div>
+  </div>
+
+  <script>
+    // Вкладки
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.content');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.target).classList.add('active');
+      });
+    });
+
+    // Поиск (только точное совпадение)
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('keyup', () => {
+      const filter = searchInput.value.trim().toLowerCase();
+      document.querySelectorAll('.card').forEach(card => {
+        const title = card.querySelector('h3').innerText.toLowerCase();
+        if (filter === "") {
+          card.style.display = "";
+        } else if (title === filter) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+  </script>
+</body>
+</html>

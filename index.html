@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qulpynai AnyDesk</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fff7f8;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #ffccd5;
+      padding: 20px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #a30c2f;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .shop-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #d62b52;
+      margin-bottom: 10px;
+    }
+    .cashier {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .btn {
+      background-color: #ff5073;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background-color: #d62b52;
+    }
+  </style>
+</head>
+<body>
+  <header>Qulpynai — Подключение к магазинам</header>
+  <div class="container">
+
+    <div class="card">
+      <div class="shop-name">Q1 — Цех Жайык</div>
+      <div class="cashier"><span>Касса 1 (Шаймерден)</span><button class="btn" onclick="connect('1949439214')">Подключиться</button></div>
+      <div class="cashier"><span>Касса 2 (Шаймерден)</span><button class="btn" onclick="connect('859379561')">Подключиться</button></div>
+      <div class="cashier"><span>Доставка</span><button class="btn" onclick="connect('1482529305')">Подключиться</button></div>
+    </div>
+
+    <div class="card">
+      <div class="shop-name">Q3 — Аксай</div>
+      <div class="cashier"><span>Касса 1</span><button class="btn" onclick="connect('733967821')">Подключиться</button></div>
+      <div class="cashier"><span>Касса 2</span><button class="btn" onclick="connect('337391878')">Подключиться</button></div>
+      <div class="cashier"><span>Касса 3</span><button class="btn" onclick="connect('1544682964')">Подключиться</button></div>
+    </div>
+
+    <!-- Добавим остальные магазины аналогично -->
+  </div>
+
+  <script>
+    function connect(id) {
+      window.location.href = `anydesk:${id}`;
+    }
+  </script>
+</body>
+</html>

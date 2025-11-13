@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qulpynai Network Access</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #fdf7f8;
+      margin: 0;
+      color: #333;
+    }
+
+    header {
+      background: #b0234e;
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      background: #f1dde2;
+      padding: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 6px 16px;
+      background: white;
+      color: #b0234e;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid #b0234e;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .tab.active {
+      background: #b0234e;
+      color: white;
+    }
+
+    .tab:hover {
+      background: #b0234e;
+      color: white;
+    }
+
+    .search-container {
+      text-align: center;
+      margin: 15px;
+    }
+
+    .search-input {
+      width: 90%;
+      max-width: 400px;
+      padding: 8px 12px;
+      border: 2px solid #b0234e;
+      border-radius: 8px;
+      outline: none;
+      font-size: 1em;
+    }
+
+    .content {
+      display: none;
+      max-width: 1100px;
+      margin: 0 auto 30px;
+      padding: 0 15px;
+    }
+
+    .content.active {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 10px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      padding: 10px 12px;
+      line-height: 1.3;
+    }
+
+    .card h3 {
+      color: #b0234e;
+      margin: 0 0 6px;
+      font-size: 1.05em;
+      text-align: center;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9em;
+      margin: 2px 0;
+    }
+
+    .btn {
+      background: #b0234e;
+      color: white;
+      text-decoration: none;
+      padding: 3px 6px;
+      border-radius: 5px;
+      font-size: 0.8em;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: #8f1e43;
+    }
+
+    .info {
+      font-size: 0.8em;
+      color: #666;
+      text-align: right;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <header>Qulpynai Network Access</header>
+
+  <div class="tabs">
+    <div class="tab" data-target="office">🏢 Офис</div>
+    <div class="tab" data-target="factory">🏭 Цех</div>
+    <div class="tab active" data-target="shops">🏪 Магазины</div>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search" class="search-input" placeholder="Поиск по названию или ID...">
+  </div>
+
+  <div id="office" class="content">
+    <p style="grid-column:1/-1;text-align:center;color:#777;">Пока пусто — добавишь позже.</p>
+  </div>
+
+  <div id="factory" class="content">
+    <p style="grid-column:1/-1;text-align:center;color:#777;">Пока пусто — добавишь позже.</p>
+  </div>
+
+  <div id="shops" class="content active">
+    <!-- Пример карточки -->
+    <div class="card">
+      <h3>Q1</h3>
+      <div class="row">
+        <span>Касса 1 — 1949439214</span>
+        <a class="btn" href="anydesk://1949439214">Открыть</a>
+      </div>
+      <div class="info">Пароль: ITQany@#</div>
+
+      <div class="row">
+        <span>Касса 2 — 859379561</span>
+        <a class="btn" href="anydesk://859379561">Открыть</a>
+      </div>
+      <div class="info">Пароль: ITQany@#</div>
+    </div>
+  </div>
+
+  <script>
+    // Вкладки
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.content');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.target).classList.add('active');
+      });
+    });
+
+    // Поиск
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('keyup', () => {
+      const filter = searchInput.value.toLowerCase();
+      document.querySelectorAll('.card').forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.style.display = text.includes(filter) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qulpynai Network Access</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #fff;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background: #b0234e;
+      color: white;
+      text-align: center;
+      padding: 18px 10px;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      background: #f8e8ee;
+      padding: 10px;
+      gap: 15px;
+    }
+
+    .tab {
+      background: white;
+      color: #b0234e;
+      border: 2px solid #b0234e;
+      border-radius: 8px;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .tab.active, .tab:hover {
+      background: #b0234e;
+      color: white;
+    }
+
+    /* Search */
+    .search-container {
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .search-container input {
+      width: 300px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    /* Q buttons */
+    .q-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 0;
+    }
+
+    .q-btn {
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+
+    .q-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Card grid */
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 15px;
+      padding: 10px 15px 40px;
+      max-width: 1300px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 10px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card h3 {
+      font-size: 1.1em;
+      margin-bottom: 6px;
+      color: #b0234e;
+    }
+
+    .cashier {
+      background: #fff8fa;
+      border-radius: 6px;
+      margin: 6px 0;
+      padding: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .cashier h4 {
+      margin: 0;
+      font-size: 0.95em;
+      color: #b0234e;
+    }
+
+    .cashier p {
+      margin: 2px 0;
+      font-size: 0.85em;
+      color: #555;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #b0234e;
+      color: white;
+      text-decoration: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #8f1e43;
+    }
+  </style>
+</head>
+<body>
+  <header>Qulpynai Network Access</header>
+
+  <div class="tabs">
+    <div class="tab active">Магазин</div>
+    <div class="tab">Цех</div>
+    <div class="tab">Офис</div>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search" placeholder="Поиск по Q, кассе или ID...">
+  </div>
+
+  <div class="q-buttons" id="qButtons"></div>
+  <div class="container" id="cardsContainer"></div>
+
+  <script>
+    const data = {
+      Q1: [{id:1949439214},{id:859379561}],
+      Q3: [{id:733967821},{id:337391878}],
+      Q4: [{id:1482392525},{id:1304973206}],
+      Q5: [{id:777710749},{id:1574065636}],
+      Q6: [{id:471765610}],
+      Q7: [{id:1656565211},{id:1417841045}],
+      Q8: [{id:925108290},{id:1832237966}],
+      Q9: [{id:1924307583},{id:1327344045}],
+      Q10:[{id:1409164512},{id:1129669494}],
+      Q11:[{id:960552277},{id:1391993846}],
+      Q12:[{id:1509397158},{id:1845681908}],
+      Q13:[{id:1182979753},{id:1340438084}],
+      Q14:[{id:1538944672}],
+      Q15:[{id:1331473765}],
+      Q16:[{id:1152336434},{id:1196613077}],
+      Q17:[{id:1186916326},{id:1364400519}],
+      Q18:[{id:1957505194}],
+      Q19:[{id:1729510955},{id:1584245639}],
+      Q20:[{id:1459401801}],
+      Q21:[{id:1763799186}],
+      Q22:[{id:1532911230},{id:1386819136}],
+      Q23:[{id:1281981741}],
+      Q24:[{id:1395449453}],
+    };
+
+    const colors = [
+      '#d63c3c','#e67300','#d6a600','#82b440','#40a6b4','#407ab4','#7a40b4',
+      '#b44091','#e06060','#f28c28','#d2b000','#76c76f','#46bfbf','#5294e2',
+      '#9a57e2','#df61a1','#e07979','#f2a42b','#c2ba00','#64c98f','#4eb5c5','#3b7ddd','#b56fe0','#ff66b2'
+    ];
+
+    const qButtons = document.getElementById('qButtons');
+    const cardsContainer = document.getElementById('cardsContainer');
+
+    Object.keys(data).forEach((q, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'q-btn';
+      btn.style.background = colors[i % colors.length];
+      btn.textContent = q;
+      btn.onclick = () => renderCards(q);
+      qButtons.appendChild(btn);
+    });
+
+    function renderCards(q) {
+      cardsContainer.innerHTML = '';
+      data[q].forEach((c, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${q}</h3>
+          <div class="cashier">
+            <h4>Касса ${idx + 1}</h4>
+            <p>ID: ${c.id}</p>
+            <p>Пароль: ITQany@#</p>
+            <a class="btn" href="anydesk://${c.id}">Подключиться</a>
+          </div>`;
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    renderCards('Q1');
+
+    document.getElementById('search').addEventListener('input', e => {
+      const val = e.target.value.toLowerCase();
+      const filtered = {};
+      Object.keys(data).forEach(q => {
+        const filteredCashiers = data[q].filter(c =>
+          q.toLowerCase().includes(val) ||
+          c.id.toString().includes(val)
+        );
+        if (filteredCashiers.length) filtered[q] = filteredCashiers;
+      });
+      cardsContainer.innerHTML = '';
+      Object.entries(filtered).forEach(([q, list]) => {
+        list.forEach((c, idx) => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h3>${q}</h3>
+            <div class="cashier">
+              <h4>Касса ${idx + 1}</h4>
+              <p>ID: ${c.id}</p>
+              <p>Пароль: ITQany@#</p>
+              <a class="btn" href="anydesk://${c.id}">Подключиться</a>
+            </div>`;
+          cardsContainer.appendChild(card);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

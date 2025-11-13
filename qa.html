@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qulpynai Anydesk</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #fdf7f8;
+      margin: 0;
+      color: #333;
+    }
+
+    header {
+      background: #b0234e;
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.6em;
+      font-weight: bold;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      background: #f1dde2;
+      padding: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tab {
+      padding: 8px 16px;
+      background: white;
+      color: #b0234e;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid #b0234e;
+      transition: 0.2s;
+      font-weight: 500;
+    }
+
+    .tab.active {
+      background: #b0234e;
+      color: white;
+    }
+
+    .content {
+      display: none;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    .content.active {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 10px 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+      border-top: 4px solid #b0234e;
+      transition: all 0.3s ease;
+    }
+
+    .card h3 {
+      margin: 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1em;
+      color: #b0234e;
+    }
+
+    .arrow {
+      transition: transform 0.3s;
+      font-size: 1.2em;
+    }
+
+    .card.active .arrow {
+      transform: rotate(90deg);
+    }
+
+    .addr {
+      font-size: 0.9em;
+      color: #666;
+      margin: 8px 0;
+    }
+
+    .cash-container {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .card.active .cash-container {
+      display: flex;
+    }
+
+    .cash {
+      background: #f9eef0;
+      border-radius: 8px;
+      padding: 6px;
+      text-align: center;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #b0234e;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.85em;
+    }
+
+    .btn:hover {
+      background: #8f1e43;
+    }
+
+    @media (max-width: 768px) {
+      .content.active {
+        display: block;
+      }
+
+      .card {
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>Qulpynai Anydesk</header>
+
+  <div class="tabs">
+    <div class="tab active" data-target="shops">🏪 Магазины</div>
+    <div class="tab" data-target="office">🏢 Офис</div>
+    <div class="tab" data-target="factory">🏭 Цех</div>
+  </div>
+
+  <div id="shops" class="content active">
+    <div class="card">
+      <h3>Q1 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Саяна Шаймерденова, 29</div>
+      <div class="cash-container">
+        <div class="cash">Касса 1<br><a href="#" class="btn">Подключиться</a></div>
+        <div class="cash">Касса 2<br><a href="#" class="btn">Подключиться</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Q2 <span class="arrow">▶</span></h3>
+      <div class="addr">Аксай-5 микрорайон, 25</div>
+      <div class="cash-container">
+        <div class="cash">Касса 1<br><a href="#" class="btn">Подключиться</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Q3 <span class="arrow">▶</span></h3>
+      <div class="addr">Микрорайон 3-й, 20а</div>
+      <div class="cash-container">
+        <div class="cash">Касса 1<br><a href="#" class="btn">Подключиться</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Q4 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Толе би, 75</div>
+      <div class="cash-container">
+        <div class="cash">Касса 1<br><a href="#" class="btn">Подключиться</a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Q5 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Сыргабекова, 22Б</div>
+      <div class="cash-container">
+        <div class="cash">Касса 1<br><a href="#" class="btn">Подключиться</a></div>
+      </div>
+    </div>
+
+    <!-- добавлены остальные Q6–Q24 -->
+    <div class="card">
+      <h3>Q6 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Розыбакиева, 320</div>
+      <div class="cash-container"><div class="cash">Касса 1<br><a href="#" class="btn">Подключиться</a></div></div>
+    </div>
+    <div class="card">
+      <h3>Q7 <span class="arrow">▶</span></h3>
+      <div class="addr">ТРЦ SPUTNIK mall​ Мамыр-1 микрорайон, 8а</div>
+      <div class="cash-container"><div class="cash">Касса 1<br><a href="#" class="btn">Подключиться</a></div></div>
+    </div>
+    <div class="card">
+      <h3>Q8 <span class="arrow">▶</span></h3>
+      <div class="addr">ЖК Alma City, улица Жунисова, 8/11</div>
+      <div class="cash-container"><div class="cash">Касса 1<br><a href="#" class="btn">Подключиться</a></div></div>
+    </div>
+    <!-- ... до Q24 аналогично -->
+  </div>
+
+  <div id="office" class="content">
+    <div class="card">
+      <h3>Офис 1</h3>
+      <div class="addr">г. Алматы, ул. Байзакова 222</div>
+      <div class="cash-container">
+        <div class="cash">ПК 1<br><a href="#" class="btn">Подключиться</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="factory" class="content">
+    <div class="card">
+      <h3>Цех</h3>
+      <div class="addr">г. Алматы, пр. Рыскулова 103</div>
+      <div class="cash-container">
+        <div class="cash">ПК 1<br><a href="#" class="btn">Подключиться</a></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Вкладки
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.target).classList.add('active');
+      });
+    });
+
+    // Аккордеон (для всех устройств)
+    document.querySelectorAll('.card h3').forEach(h => {
+      h.addEventListener('click', () => {
+        const card = h.parentElement;
+        card.classList.toggle('active');
+      });
+    });
+  </script>
+</body>
+</html>

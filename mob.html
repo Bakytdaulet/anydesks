@@ -96,7 +96,8 @@
     .cash-container {
       display: none;
       flex-direction: column;
-      gap: 6px;
+      gap: 10px;
+      margin-top: 8px;
     }
 
     .card.active .cash-container {
@@ -106,32 +107,85 @@
     .cash {
       background: #f9eef0;
       border-radius: 8px;
-      padding: 6px;
+      padding: 10px;
       text-align: center;
+      font-size: 0.95em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
     }
 
-    .btn {
+    .id-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center; /* центрируем */
+      font-weight: 600;
+      font-size: 0.98em;
+    }
+
+    .check {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ddd; /* серый по умолчанию */
+      color: white;
+      font-size: 13px;
+      transition: background 0.18s;
+    }
+
+    .check.active {
+      background: #1fa82d; /* зелёный при копировании */
+    }
+
+    .copy-btn {
+      background: #bfbfbf;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.18s;
+      font-size: 0.85em;
+      display: inline-block;
+    }
+
+    .copy-btn.copied {
+      background: #1fa82d;
+    }
+
+    .pwd {
+      color: #333;
+      font-weight: 600;
+    }
+
+    .connect-btn {
       display: inline-block;
       background: #b0234e;
       color: white;
-      padding: 5px 10px;
+      padding: 6px 12px;
       border-radius: 6px;
       text-decoration: none;
       font-size: 0.85em;
+      margin-top: 4px;
     }
 
-    .btn:hover {
-      background: #8f1e43;
+    /* небольшой отступ между кнопками */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+      margin-top: 6px;
     }
 
-    @media (max-width: 768px) {
-      .content.active {
-        display: block;
-      }
-
-      .card {
-        margin-bottom: 10px;
-      }
+    @media (max-width: 480px) {
+      .id-row { font-size: 0.9em; }
+      .copy-btn, .connect-btn { padding: 6px 10px; font-size: 0.8em; }
     }
   </style>
 </head>
@@ -145,65 +199,449 @@
   </div>
 
   <div id="shops" class="content active">
-    <!-- === Магазины Q1–Q24 === -->
-    <div class="card"><h3>Q1 <span class="arrow">▶</span></h3><div class="addr">Улица Саяна Шаймерденова, 29</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1949439214" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://859379561" class="btn">Подключиться</a></div></div></div>
+    <!-- Q1 -->
+    <div class="card">
+      <h3>Q1 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Саяна Шаймерденова, 29</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row">
+            <span class="check" aria-hidden="true"></span>
+            <span class="id-text">ID: <span class="id-value">1949439214</span></span>
+          </div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls">
+            <button class="copy-btn" data-id="1949439214">Скопировать ID</button>
+            <a class="connect-btn" href="anydesk://1949439214">Подключиться</a>
+          </div>
+        </div>
 
-    <div class="card"><h3>Q2 <span class="arrow">▶</span></h3><div class="addr"></div></div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row">
+            <span class="check" aria-hidden="true"></span>
+            <span class="id-text">ID: <span class="id-value">859379561</span></span>
+          </div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls">
+            <button class="copy-btn" data-id="859379561">Скопировать ID</button>
+            <a class="connect-btn" href="anydesk://859379561">Подключиться</a>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q3 <span class="arrow">▶</span></h3><div class="addr">Аксай-5 микрорайон, 25</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://733967821" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://337391878" class="btn">Подключиться</a></div></div></div>
+    <!-- Q2 (пустой адрес остается) -->
+    <div class="card">
+      <h3>Q2 <span class="arrow">▶</span></h3>
+      <div class="addr"></div>
+    </div>
 
-    <div class="card"><h3>Q4 <span class="arrow">▶</span></h3><div class="addr">Микрорайон 3-й, 20а</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1482392525" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1304973206" class="btn">Подключиться</a></div></div></div>
+    <!-- Q3 -->
+    <div class="card">
+      <h3>Q3 <span class="arrow">▶</span></h3>
+      <div class="addr">Аксай-5 микрорайон, 25</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">733967821</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="733967821">Скопировать ID</button><a class="connect-btn" href="anydesk://733967821">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">337391878</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="337391878">Скопировать ID</button><a class="connect-btn" href="anydesk://337391878">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q5 <span class="arrow">▶</span></h3><div class="addr">Улица Толе би, 75</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://777710749" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1574065636" class="btn">Подключиться</a></div></div></div>
+    <!-- Q4 -->
+    <div class="card">
+      <h3>Q4 <span class="arrow">▶</span></h3>
+      <div class="addr">Микрорайон 3-й, 20а</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1482392525</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1482392525">Скопировать ID</button><a class="connect-btn" href="anydesk://1482392525">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1304973206</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1304973206">Скопировать ID</button><a class="connect-btn" href="anydesk://1304973206">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q6 <span class="arrow">▶</span></h3><div class="addr">Улица Сыргабекова, 22Б</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://471765610" class="btn">Подключиться</a></div></div></div>
+    <!-- Q5 -->
+    <div class="card">
+      <h3>Q5 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Толе би, 75</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">777710749</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="777710749">Скопировать ID</button><a class="connect-btn" href="anydesk://777710749">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1574065636</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1574065636">Скопировать ID</button><a class="connect-btn" href="anydesk://1574065636">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q7 <span class="arrow">▶</span></h3><div class="addr">Улица Розыбакиева, 320</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1656565211" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1417841045" class="btn">Подключиться</a></div></div></div>
+    <!-- Q6 -->
+    <div class="card">
+      <h3>Q6 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Сыргабекова, 22Б</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">471765610</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="471765610">Скопировать ID</button><a class="connect-btn" href="anydesk://471765610">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q8 <span class="arrow">▶</span></h3><div class="addr">Улица Егинсу, 29/12</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://925108290" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1832237966" class="btn">Подключиться</a></div></div></div>
+    <!-- Q7 -->
+    <div class="card">
+      <h3>Q7 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Розыбакиева, 320</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1656565211</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1656565211">Скопировать ID</button><a class="connect-btn" href="anydesk://1656565211">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1417841045</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1417841045">Скопировать ID</button><a class="connect-btn" href="anydesk://1417841045">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q9 <span class="arrow">▶</span></h3><div class="addr">ТРЦ SPUTNIK mall​ Мамыр-1 микрорайон, 8а</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1924307583" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1327344045" class="btn">Подключиться</a></div></div></div>
+    <!-- Q8 -->
+    <div class="card">
+      <h3>Q8 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Егинсу, 29/12</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">925108290</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="925108290">Скопировать ID</button><a class="connect-btn" href="anydesk://925108290">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1832237966</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1832237966">Скопировать ID</button><a class="connect-btn" href="anydesk://1832237966">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q10 <span class="arrow">▶</span></h3><div class="addr">ЖК Alma City, улица Жунисова, 8/11</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1409164512" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1129669494" class="btn">Подключиться</a></div></div></div>
+    <!-- Q9 -->
+    <div class="card">
+      <h3>Q9 <span class="arrow">▶</span></h3>
+      <div class="addr">ТРЦ SPUTNIK mall​ Мамыр-1 микрорайон, 8а</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1924307583</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1924307583">Скопировать ID</button><a class="connect-btn" href="anydesk://1924307583">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1327344045</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1327344045">Скопировать ID</button><a class="connect-btn" href="anydesk://1327344045">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q11 <span class="arrow">▶</span></h3><div class="addr">Улица Есил, 5а</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://960552277" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1391993846" class="btn">Подключиться</a></div></div></div>
+    <!-- Q10 -->
+    <div class="card">
+      <h3>Q10 <span class="arrow">▶</span></h3>
+      <div class="addr">ЖК Alma City, улица Жунисова, 8/11</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1409164512</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1409164512">Скопировать ID</button><a class="connect-btn" href="anydesk://1409164512">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1129669494</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1129669494">Скопировать ID</button><a class="connect-btn" href="anydesk://1129669494">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q12 <span class="arrow">▶</span></h3><div class="addr">Рынок Алатау, улица Алатау, 2д, пос. Боралдай</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1509397158" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1845681908" class="btn">Подключиться</a></div></div></div>
+    <!-- Q11 -->
+    <div class="card">
+      <h3>Q11 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Есил, 5а</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">960552277</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="960552277">Скопировать ID</button><a class="connect-btn" href="anydesk://960552277">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1391993846</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1391993846">Скопировать ID</button><a class="connect-btn" href="anydesk://1391993846">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q13 <span class="arrow">▶</span></h3><div class="addr">Айнабулак микрорайон, 9а</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1182979753" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1340438084" class="btn">Подключиться</a></div></div></div>
+    <!-- Q12 -->
+    <div class="card">
+      <h3>Q12 <span class="arrow">▶</span></h3>
+      <div class="addr">Рынок Алатау, улица Алатау, 2д, пос. Боралдай</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1509397158</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1509397158">Скопировать ID</button><a class="connect-btn" href="anydesk://1509397158">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1845681908</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1845681908">Скопировать ID</button><a class="connect-btn" href="anydesk://1845681908">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q14 <span class="arrow">▶</span></h3><div class="addr">Таусамалы микрорайон, 98</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1538944672" class="btn">Подключиться</a></div></div></div>
+    <!-- Q13 -->
+    <div class="card">
+      <h3>Q13 <span class="arrow">▶</span></h3>
+      <div class="addr">Айнабулак микрорайон, 9а</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1182979753</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1182979753">Скопировать ID</button><a class="connect-btn" href="anydesk://1182979753">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1340438084</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1340438084">Скопировать ID</button><a class="connect-btn" href="anydesk://1340438084">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q15 <span class="arrow">▶</span></h3><div class="addr">Улица Вишнёвая, 16/2</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1331473765" class="btn">Подключиться</a></div></div></div>
+    <!-- Q14 -->
+    <div class="card">
+      <h3>Q14 <span class="arrow">▶</span></h3>
+      <div class="addr">Таусамалы микрорайон, 98</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1538944672</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1538944672">Скопировать ID</button><a class="connect-btn" href="anydesk://1538944672">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q16 <span class="arrow">▶</span></h3><div class="addr">Улица Шолохова, 2</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1152336434" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1196613077" class="btn">Подключиться</a></div></div></div>
+    <!-- Q15 -->
+    <div class="card">
+      <h3>Q15 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Вишнёвая, 16/2</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1331473765</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1331473765">Скопировать ID</button><a class="connect-btn" href="anydesk://1331473765">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q17 <span class="arrow">▶</span></h3><div class="addr">Улица Розыбакиева, 75</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1186916326" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1364400519" class="btn">Подключиться</a></div></div></div>
+    <!-- Q16 -->
+    <div class="card">
+      <h3>Q16 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Шолохова, 2</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1152336434</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1152336434">Скопировать ID</button><a class="connect-btn" href="anydesk://1152336434">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1196613077</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1196613077">Скопировать ID</button><a class="connect-btn" href="anydesk://1196613077">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q18 <span class="arrow">▶</span></h3><div class="addr">Жетысу-3 микрорайон, 24</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1957505194" class="btn">Подключиться</a></div></div></div>
+    <!-- Q17 -->
+    <div class="card">
+      <h3>Q17 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Розыбакиева, 75</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1186916326</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1186916326">Скопировать ID</button><a class="connect-btn" href="anydesk://1186916326">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1364400519</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1364400519">Скопировать ID</button><a class="connect-btn" href="anydesk://1364400519">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q19 <span class="arrow">▶</span></h3><div class="addr">Улица Жансугурова, 159, с. Отеген Батыра</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1729510955" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1584245639" class="btn">Подключиться</a></div></div></div>
+    <!-- Q18 -->
+    <div class="card">
+      <h3>Q18 <span class="arrow">▶</span></h3>
+      <div class="addr">Жетысу-3 микрорайон, 24</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1957505194</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1957505194">Скопировать ID</button><a class="connect-btn" href="anydesk://1957505194">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q20 <span class="arrow">▶</span></h3><div class="addr">ЖК Assem plaza, улица Толе би, 181</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1459401801" class="btn">Подключиться</a></div></div></div>
+    <!-- Q19 -->
+    <div class="card">
+      <h3>Q19 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Жансугурова, 159, с. Отеген Батыра</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1729510955</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1729510955">Скопировать ID</button><a class="connect-btn" href="anydesk://1729510955">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1584245639</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1584245639">Скопировать ID</button><a class="connect-btn" href="anydesk://1584245639">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q21 <span class="arrow">▶</span></h3><div class="addr">ЖК Дом на Абая, проспект Гагарина, 124</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1763799186" class="btn">Подключиться</a></div></div></div>
+    <!-- Q20 -->
+    <div class="card">
+      <h3>Q20 <span class="arrow">▶</span></h3>
+      <div class="addr">ЖК Assem plaza, улица Толе би, 181</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1459401801</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1459401801">Скопировать ID</button><a class="connect-btn" href="anydesk://1459401801">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q22 <span class="arrow">▶</span></h3><div class="addr">Улица Аккайын, 2/1</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1532911230" class="btn">Подключиться</a></div><div class="cash">Касса 2<br><a href="anydesk://1386819136" class="btn">Подключиться</a></div></div></div>
+    <!-- Q21 -->
+    <div class="card">
+      <h3>Q21 <span class="arrow">▶</span></h3>
+      <div class="addr">ЖК Дом на Абая, проспект Гагарина, 124</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1763799186</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1763799186">Скопировать ID</button><a class="connect-btn" href="anydesk://1763799186">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q23 <span class="arrow">▶</span></h3><div class="addr">Улица Кисикова, 42а, Каскелен</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1281981741" class="btn">Подключиться</a></div></div></div>
+    <!-- Q22 -->
+    <div class="card">
+      <h3>Q22 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Аккайын, 2/1</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1532911230</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1532911230">Скопировать ID</button><a class="connect-btn" href="anydesk://1532911230">Подключиться</a></div>
+        </div>
+        <div class="cash">
+          <div><b>Касса 2</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1386819136</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1386819136">Скопировать ID</button><a class="connect-btn" href="anydesk://1386819136">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="card"><h3>Q24 <span class="arrow">▶</span></h3><div class="addr">МФК RAMSTORE ALL IN, проспект Назарбаева, 226</div><div class="cash-container"><div class="cash">Касса 1<br><a href="anydesk://1395449453" class="btn">Подключиться</a></div></div></div>
+    <!-- Q23 -->
+    <div class="card">
+      <h3>Q23 <span class="arrow">▶</span></h3>
+      <div class="addr">Улица Кисикова, 42а, Каскелен</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1281981741</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1281981741">Скопировать ID</button><a class="connect-btn" href="anydesk://1281981741">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q24 -->
+    <div class="card">
+      <h3>Q24 <span class="arrow">▶</span></h3>
+      <div class="addr">МФК RAMSTORE ALL IN, проспект Назарбаева, 226</div>
+      <div class="cash-container">
+        <div class="cash">
+          <div><b>Касса 1</b></div>
+          <div class="id-row"><span class="check"></span><span class="id-text">ID: <span class="id-value">1395449453</span></span></div>
+          <div>Пароль: <span class="pwd">ITQany@#</span></div>
+          <div class="controls"><button class="copy-btn" data-id="1395449453">Скопировать ID</button><a class="connect-btn" href="anydesk://1395449453">Подключиться</a></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <div id="office" class="content">
-    <div class="card"><h3>Офис 1</h3><div class="addr">г. Алматы, ул. Байзакова 222</div><div class="cash-container"><div class="cash">ПК 1<br><a href="#" class="btn">Подключиться</a></div></div></div>
+    <div class="card"><h3>Офис 1</h3><div class="addr">г. Алматы, ул. Байзакова 222</div><div class="cash-container"><div class="cash">ПК 1<br><a href="#" class="connect-btn">Подключиться</a></div></div></div>
   </div>
 
   <div id="factory" class="content">
-    <div class="card"><h3>Цех</h3><div class="addr">г. Алматы, пр. Рыскулова 103</div><div class="cash-container"><div class="cash">ПК 1<br><a href="#" class="btn">Подключиться</a></div></div></div>
+    <div class="card"><h3>Цех</h3><div class="addr">г. Алматы, пр. Рыскулова 103</div><div class="cash-container"><div class="cash">ПК 1<br><a href="#" class="connect-btn">Подключиться</a></div></div></div>
   </div>
 
   <script>
+    // табы
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -213,10 +651,63 @@
       });
     });
 
+    // раскрытие карточек
     document.querySelectorAll('.card h3').forEach(h => {
       h.addEventListener('click', () => {
         const card = h.parentElement;
         card.classList.toggle('active');
+      });
+    });
+
+    // обработка кнопок "Скопировать ID"
+    function resetOtherButtons(exceptBtn) {
+      // убираем состояние у других кнопок (если нужно)
+      document.querySelectorAll('.copy-btn').forEach(b => {
+        if (b !== exceptBtn) {
+          b.classList.remove('copied');
+          b.textContent = 'Скопировать ID';
+          const ch = b.closest('.cash').querySelector('.check');
+          if (ch) ch.classList.remove('active'), ch.textContent = '';
+        }
+      });
+    }
+
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = btn.getAttribute('data-id');
+        try {
+          await navigator.clipboard.writeText(id);
+        } catch (err) {
+          // если clipboard API заблокирован — создаём временное поле
+          const ta = document.createElement('textarea');
+          ta.value = id;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+
+        // снимаем отметки у других
+        resetOtherButtons(btn);
+
+        // пометим текущую кнопку и поставим галочку слева
+        btn.classList.add('copied');
+        btn.textContent = 'Скопировано';
+        const check = btn.closest('.cash').querySelector('.check');
+        if (check) {
+          check.classList.add('active');
+          check.textContent = '✔';
+        }
+
+        // через 1.8s вернуть кнопку в исходное состояние, но галочка можно оставить зелёной или убрать — тут уберём
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.textContent = 'Скопировать ID';
+          if (check) {
+            check.classList.remove('active');
+            check.textContent = '';
+          }
+        }, 1800);
       });
     });
   </script>

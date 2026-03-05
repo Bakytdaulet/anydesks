@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Wi-Fi Guest</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  text-align: center;
+  padding-top: 60px;
+}
+.box {
+  background: #ffffff;
+  width: 300px;
+  margin: auto;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+input[type=password] {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+input[type=submit] {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 5px;
+  background: #4CAF50;
+  color: #fff;
+  font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+<div class="box">
+  <h2>Подключение к Wi-Fi</h2>
+
+  <form action="/login" method="post">
+    <!-- СКРЫТЫЙ ЛОГИН -->
+    <input type="hidden" name="username" value="guest">
+
+    <!-- ТОЛЬКО ПАРОЛЬ -->
+    <input type="password" name="password" placeholder="Введите пароль" required>
+
+    <input type="submit" value="Подключиться">
+  </form>
+</div>
+</body>
+</html>

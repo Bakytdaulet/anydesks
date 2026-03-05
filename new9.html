@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Учёт оборудования — Demo (локально)</title>
+<style>
+:root{
+  --bg:#f6f8fb; --card:#fff; --accent:#1763d8; --muted:#64748b; --ok:#0f9d58; --bad:#d23b3b;
+  --radius:10px; --gap:12px;
+  --glass: rgba(255,255,255,0.85);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#f7fbff 0%,var(--bg) 100%);color:#0f172a}
+.app{max-width:1200px;margin:18px auto;padding:18px;background:var(--glass);border-radius:14px;box-shadow:0 12px 40px rgba(16,24,40,0.08)}
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+h1{margin:0;font-size:20px}
+.small{color:var(--muted);font-size:13px}
+.row{display:flex;gap:12px;align-items:center}
+.btn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700}
+.btn.ghost{background:#eef4ff;color:var(--accent)}
+.tabs{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+.tab{padding:8px 12px;border-radius:999px;background:#eef6ff;color:var(--accent);border:0;cursor:pointer;font-weight:700}
+.tab.active{background:var(--accent);color:#fff;box-shadow:0 8px 28px rgba(23,91,211,0.12)}
+.grid{display:grid;grid-template-columns:320px 1fr;gap:12px}
+.card{background:var(--card);padding:14px;border-radius:12px;border:1px solid rgba(15,23,42,0.04)}
+.select, input, textarea{width:100%;padding:8px;border-radius:8px;border:1px solid #e6e9ef;background:#fbfdff}
+.list{display:flex;flex-direction:column;gap:8px}
+.employee-card{border:1px solid #eef6ff;padding:10px;border-radius:10px;background:#fbfdff;display:flex;flex-direction:column;gap:8px}
+.employee-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-weight:700;font-size:12px}
+.badge-pool{background:#fff7ed;color:#b45309;border:1px solid #ffedd5}
+.badge-wait{background:#fff4e6;color:#b45a00;border:1px solid #ffd8b2}
+.badge-active{background:#ecfdf3;color:var(--ok);border:1px solid #d1f7d8}
+.table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+.table th,.table td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:left}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:60}
+.modal.show{display:flex}
+.modal-box{background:#fff;padding:14px;border-radius:10px;min-width:320px;max-width:900px;max-height:80vh;overflow:auto}
+.footer{margin-top:12px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+.kv{display:flex;gap:8px;align-items:center}
+.kv b{min-width:110px;display:inline-block;color:#0f172a}
+.small-muted{color:var(--muted);font-size:13px}
+@media(max-width:920px){ .grid{grid-template-columns:1fr} .employee-card{min-width:0} .header{flex-direction:column;align-items:flex-start} }
+</style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Login -->
+    <div id="loginScreen">
+      <div class="header">
+        <div>
+          <h1>Учёт оборудования — вход</h1>
+          <div class="small">Demo-учёт: <strong>admin/1234</strong> (IT), <strong>buh/1234</strong> (Бухгалтер)</div>
+        </div>
+      </div>
+      <div class="card" style="max-width:640px;margin:0 auto">
+        <label>Логин</label>
+        <input id="loginUser" class="select" placeholder="Введите логин (admin / buh)">
+        <label style="margin-top:8px">Пароль</label>
+        <input id="loginPass" class="select" type="password" placeholder="Пароль">
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+          <button id="loginBtn" class="btn">Войти</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div id="mainScreen" style="display:none">
+      <div class="header">
+        <div>
+          <h1>Учёт оборудования</h1>
+          <div class="small" id="whoInfo"></div>
+        </div>
+        <div class="row">
+          <button id="exportBtn" class="btn ghost">Экспорт CSV</button>
+          <button id="logoutBtn" class="btn">Выйти</button>
+        </div>
+      </div>
+
+      <div class="tabs" id="tabsRow">
+        <button class="tab active" data-tab="tabEmployees">Сотрудники</button>
+        <button class="tab" data-tab="tabAdd">Добавить / Назначить</button>
+        <button class="tab" data-tab="tabIT">IT-панель</button>
+        <button class="tab" data-tab="tabPool">Пул устройств</button>
+        <button class="tab" data-tab="tabReports">Журнал</button>
+      </div>
+
+      <div class="grid">
+        <div>
+          <div class="card">
+            <h3>Фильтры</h3>
+            <label>Компания</label>
+            <select id="fCompany" class="select"></select>
+            <label style="margin-top:8px">Подразделение</label>
+            <select id="fSubdivision" class="select"></select>
+            <label style="margin-top:8px">Отдел</label>
+            <select id="fDepartment" class="select"></select>
+            <label style="margin-top:8px">Сотрудник</label>
+            <select id="fEmployee" class="select"></select>
+            <div style="margin-top:8px;display:flex;gap:8px;justify-content:space-between">
+              <button id="filterApply" class="btn">Применить</button>
+              <button id="filterClear" class="btn ghost">Сбросить</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <h3>Сотрудники</h3>
+            <div style="display:flex;gap:8px;margin-bottom:8px">
+              <button id="btnAddEmployeeOpen" class="btn">Добавить сотрудника</button>
+              <button id="btnRefresh" class="btn ghost">Обновить список</button>
+            </div>
+            <div id="employeesList" class="list" style="max-height:540px;overflow:auto"></div>
+          </div>
+        </div>
+
+        <div>
+          <!-- panels -->
+          <div id="tabEmployees" class="card tabPanel" style="display:block">
+            <h3>Карточка сотрудника — выберите сотрудника слева</h3>
+            <div id="employeeView" style="margin-top:12px">Пока сотрудник не выбран.</div>
+          </div>
+
+          <div id="tabAdd" class="card tabPanel" style="display:none">
+            <h3>Добавить устройство / назначить из пула</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div>
+                <label>Компания</label><select id="addCompany" class="select"></select>
+                <label style="margin-top:8px">Подразделение</label><select id="addSubdivision" class="select"></select>
+                <label style="margin-top:8px">Отдел</label><select id="addDepartment" class="select"></select>
+                <label style="margin-top:8px">Сотрудник (назначить)</label><select id="addEmployee" class="select"></select>
+              </div>
+              <div>
+                <label>Тип добавления</label>
+                <select id="addType" class="select">
+                  <option value="new">Новое устройство (создать заявку)</option>
+                  <option value="pool">Добавить в пул (свободное)</option>
+                </select>
+                <label style="margin-top:8px">Инв. №</label><input id="addInv" class="select" placeholder="INV123">
+                <label style="margin-top:8px">Название</label><input id="addName" class="select" placeholder="Ноутбук Dell">
+              </div>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+              <button id="addCreateBtn" class="btn">Добавить</button>
+              <button id="addClearBtn" class="btn ghost">Очистить</button>
+            </div>
+
+            <hr style="margin:14px 0">
+
+            <h4>Назначить устройство из пула</h4>
+            <label>Компания</label><select id="assignCompany" class="select"></select>
+            <label style="margin-top:8px">Устройство из пула</label><select id="assignDevice" class="select"></select>
+            <label style="margin-top:8px">Отдел</label><select id="assignDept" class="select"></select>
+            <label style="margin-top:8px">Сотрудник</label><select id="assignEmp" class="select"></select>
+            <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end">
+              <button id="assignBtn" class="btn">Назначить (создать заявку)</button>
+            </div>
+          </div>
+
+          <div id="tabIT" class="card tabPanel" style="display:none">
+            <h3>IT — заявки (Ожидание IT)</h3>
+            <div style="margin-top:8px;overflow:auto">
+              <table class="table" id="itTable">
+                <thead><tr><th>Тип</th><th>Компания</th><th>Подр.</th><th>Отдел</th><th>Сотрудник</th><th>Инв.</th><th>Название</th><th>Действие</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tabPool" class="card tabPanel" style="display:none">
+            <h3>Пул свободных устройств</h3>
+            <label>Компания</label><select id="poolCompany" class="select"></select>
+            <table class="table" id="poolTable" style="margin-top:8px"><thead><tr><th>Инв.</th><th>Название</th><th>Компания</th><th>Действие</th></tr></thead><tbody></tbody></table>
+          </div>
+
+          <div id="tabReports" class="card tabPanel" style="display:none">
+            <h3>Журнал действий</h3>
+            <table class="table" id="reportsTable" style="margin-top:8px"><thead><tr><th>Дата</th><th>Компания</th><th>Сотрудник</th><th>Действие</th><th>Инв.</th><th>Название</th></tr></thead><tbody></tbody></table>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>Демо — локально (localStorage)</div>
+        <div class="small">IT = админ (полный доступ)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="modalReplace" class="modal" aria-hidden="true">
+    <div class="modal-box">
+      <h3>Замена устройства (IT)</h3>
+      <div style="margin-top:8px">
+        <div class="kv"><b>Для сотрудника:</b> <span id="modalReplaceEmployee"></span></div>
+        <label style="margin-top:8px">Новая заявка (ожидание)</label>
+        <select id="modalNew" class="select"></select>
+        <label style="margin-top:8px">Старое устройство (на балансе)</label>
+        <select id="modalOld" class="select"></select>
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+          <button id="modalReplaceCancel" class="btn ghost">Отмена</button>
+          <button id="modalReplaceConfirm" class="btn">Подтвердить замену</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalAddEmployee" class="modal" aria-hidden="true">
+    <div class="modal-box">
+      <h3>Добавить сотрудника</h3>
+      <div style="margin-top:8px">
+        <label>Компания</label><select id="newCompany" class="select"></select>
+        <label style="margin-top:8px">Подразделение</label><input id="newSubdivision" class="select" placeholder="например: Офис 2">
+        <label style="margin-top:8px">Отдел</label><input id="newDepartment" class="select" placeholder="например: HR">
+        <label style="margin-top:8px">ФИО</label><input id="newEmployeeName" class="select" placeholder="ФИО">
+        <label style="margin-top:8px">Должность</label><input id="newEmployeePos" class="select" placeholder="Должность">
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+          <button id="modalAddEmployeeCancel" class="btn ghost">Отмена</button>
+          <button id="modalAddEmployeeConfirm" class="btn">Добавить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =========================
+   Данные и логика (frontend)
+   Всё сохраняется в localStorage
+   ========================= */
+const LS_KEY = 'equip_app_v5_demo';
+
+// demo users
+const USERS = [
+  {login:'admin', pass:'1234', role:'admin', name:'IT (админ)'},
+  {login:'buh', pass:'1234', role:'buh', name:'Бухгалтер'}
+];
+
+// initial companies -> you can later add employees by бухгалтер
+const INITIAL_COMPANIES = [
+  {name:'Компания A', subdivisions:[
+    {name:'Магазин 1', departments:[
+      {name:'BUH', employees:['Абдулаева Саида','Данаева Айгуль','Сулейменова Карлыгаш']},
+      {name:'IT', employees:['Ілиясов Данияр','Калмурзаев Бақытдәулет']}
+    ]},
+    {name:'Офис 1', departments:[
+      {name:'Финансы', employees:['Балтабаев Асылхан','Мизанов Жасулан']}
+    ]},
+    {name:'Цех 1', departments:[
+      {name:'Производство', employees:['Робертов А.']}
+    ]}
+  ]},
+  {name:'Quorum', subdivisions:[
+    {name:'Офис Quorum', departments:[
+      {name:'HR', employees:['Шынат Айзере','Кудабаева Альвина']},
+      {name:'Recruiter', employees:['Оразбай Фариза']}
+    ]}
+  ]}
+];
+
+// state shape:
+// { companies: [...], devices: [...], reports: [...] }
+// device: { id, company, subdivision, department, employee|null, inv, name, status: 'Pool'|'Ожидание IT'|'Принято'|'Заменено', date, replacedOfId|null, type:'new'|'pool' }
+// report: { date, company, employee, action, inv, name, deviceId, meta }
+let state = loadState();
+if(!state){
+  state = { companies: INITIAL_COMPANIES, devices: [], reports: [] };
+  // seed some example devices
+  state.devices.push({ id: uid(), company:'Компания A', subdivision:'Магазин 1', department:'BUH', employee:'Абдулаева Саида', inv:'INV001', name:'Принтер HP', status:'Принято', date: nowISO(), replacedOfId:null, type:'existing' });
+  state.devices.push({ id: uid(), company:'Компания A', subdivision:'Магазин 1', department:'IT', employee:null, inv:'INVPOOL01', name:'Монитор LG', status:'Pool', date: nowISO(), replacedOfId:null, type:'pool' });
+  state.devices.push({ id: uid(), company:'Quorum', subdivision:'Офис Quorum', department:'HR', employee:'Шынат Айзере', inv:'INV005', name:'Ноутбук Lenovo', status:'Принято', date: nowISO(), replacedOfId:null, type:'existing' });
+  saveState();
+}
+
+/* helpers */
+function uid(){ return 'd_' + Math.random().toString(36).slice(2,9); }
+function nowISO(){ return new Date().toISOString(); }
+function formatDate(d){ return new Date(d).toLocaleString(); }
+function esc(s){ if(!s && s!==0) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function loadState(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)); }catch(e){return null} }
+function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+/* session */
+let currentUser = null;
+
+/* UI refs */
+const loginScreen = document.getElementById('loginScreen');
+const mainScreen = document.getElementById('mainScreen');
+const whoInfo = document.getElementById('whoInfo');
+
+/* Login */
+document.getElementById('loginBtn').addEventListener('click', ()=> {
+  const login = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  const user = USERS.find(u=>u.login===login && u.pass===pass);
+  if(!user) return alert('Неверный логин или пароль. Demo: admin/1234, buh/1234');
+  currentUser = user;
+  loginScreen.style.display='none';
+  mainScreen.style.display='block';
+  whoInfo.textContent = `${user.name} — роль: ${user.role}`;
+  applyRoleUI();
+  initSelectors();
+  renderAll();
+});
+
+/* Logout */
+document.getElementById('logoutBtn').addEventListener('click', ()=> {
+  if(!confirm('Выйти?')) return;
+  currentUser = null;
+  loginScreen.style.display='block';
+  mainScreen.style.display='none';
+});
+
+/* tabs */
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click', ()=> {
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const id = btn.dataset.tab;
+    document.querySelectorAll('.tabPanel').forEach(p=>p.style.display='none');
+    document.getElementById(id).style.display='block';
+    if(id==='tabIT') renderIT();
+    if(id==='tabPool') renderPool();
+    if(id==='tabReports') renderReports();
+  });
+});
+
+/* role-based UI */
+function applyRoleUI(){
+  if(!currentUser) return;
+  if(currentUser.role === 'buh'){
+    document.querySelector('.tab[data-tab="tabIT"]').style.display = 'none';
+  } else {
+    document.querySelector('.tab[data-tab="tabIT"]').style.display = 'inline-block';
+  }
+}
+
+/* init selectors and chains */
+function fillSelect(elId, arr, includeEmpty=true){
+  const el = document.getElementById(elId);
+  el.innerHTML = includeEmpty ? '<option value="">--</option>' : '';
+  (arr||[]).forEach(x=>{
+    const o = document.createElement('option'); o.value = x; o.textContent = x; el.appendChild(o);
+  });
+}
+
+function initSelectors(){
+  fillSelect('fCompany', state.companies.map(c=>c.name));
+  fillSelect('addCompany', state.companies.map(c=>c.name));
+  fillSelect('assignCompany', state.companies.map(c=>c.name));
+  fillSelect('poolCompany', state.companies.map(c=>c.name));
+  fillSelect('newCompany', state.companies.map(c=>c.name));
+  // empty dependents
+  fillSelect('fSubdivision', []); fillSelect('fDepartment', []); fillSelect('fEmployee', []);
+  fillSelect('addSubdivision', []); fillSelect('addDepartment', []); fillSelect('addEmployee', []);
+  fillSelect('assignDept', []); fillSelect('assignEmp', []); fillSelect('assignDevice', []);
+  // event chains
+  document.getElementById('fCompany').addEventListener('change', ()=> {
+    const c = state.companies.find(x=>x.name === document.getElementById('fCompany').value);
+    fillSelect('fSubdivision', c? c.subdivisions.map(s=>s.name) : []);
+    fillSelect('fDepartment', []); fillSelect('fEmployee', []);
+  });
+  document.getElementById('fSubdivision').addEventListener('change', ()=> {
+    const comp = state.companies.find(x=>x.name === document.getElementById('fCompany').value);
+    const sub = comp?.subdivisions.find(s=>s.name === document.getElementById('fSubdivision').value);
+    fillSelect('fDepartment', sub? sub.departments.map(d=>d.name) : []);
+    fillSelect('fEmployee', []);
+  });
+  document.getElementById('fDepartment').addEventListener('change', ()=> {
+    const comp = state.companies.find(x=>x.name === document.getElementById('fCompany').value);
+    const sub = comp?.subdivisions.find(s=>s.name === document.getElementById('fSubdivision').value);
+    const dept = sub?.departments.find(d=>d.name === document.getElementById('fDepartment').value);
+    fillSelect('fEmployee', dept? dept.employees : []);
+  });
+
+  // add chain
+  document.getElementById('addCompany').addEventListener('change', ()=> {
+    const comp = state.companies.find(x=>x.name === document.getElementById('addCompany').value);
+    fillSelect('addSubdivision', comp? comp.subdivisions.map(s=>s.name) : []);
+    fillSelect('addDepartment', []); fillSelect('addEmployee', []);
+  });
+  document.getElementById('addSubdivision').addEventListener('change', ()=> {
+    const comp = state.companies.find(x=>x.name === document.getElementById('addCompany').value);
+    const sub = comp?.subdivisions.find(s=>s.name === document.getElementById('addSubdivision').value);
+    fillSelect('addDepartment', sub? sub.departments.map(d=>d.name) : []); fillSelect('addEmployee', []);
+  });
+  document.getElementById('addDepartment').addEventListener('change', ()=> {
+    const comp = state.companies.find(x=>x.name === document.getElementById('addCompany').value);
+    const sub = comp?.subdivisions.find(s=>s.name === document.getElementById('addSubdivision').value);
+    const dept = sub?.departments.find(d=>d.name === document.getElementById('addDepartment').value);
+    fillSelect('addEmployee', dept? dept.employees : []);
+  });
+
+  // assign chain
+  document.getElementById('assignCompany').addEventListener('change', ()=> {
+    const compName = document.getElementById('assignCompany').value;
+    const comp = state.companies.find(x=>x.name === compName);
+    const depts = comp ? comp.subdivisions.flatMap(s=>s.departments.map(d=>d.name)) : [];
+    fillSelect('assignDept', depts);
+    refreshAssignDevices();
+  });
+  document.getElementById('assignDept').addEventListener('change', ()=> {
+    const compName = document.getElementById('assignCompany').value;
+    const deptName = document.getElementById('assignDept').value;
+    let emps = [];
+    const comp = state.companies.find(x=>x.name === compName);
+    if(comp){
+      comp.subdivisions.forEach(s=> s.departments.forEach(d=> { if(d.name===deptName) emps.push(...d.employees); }));
+    }
+    fillSelect('assignEmp', emps);
+  });
+
+  document.getElementById('poolCompany').addEventListener('change', renderPool);
+}
+
+/* build employees array */
+function buildEmployeeIndex(){
+  const items = [];
+  state.companies.forEach(c=>{
+    c.subdivisions.forEach(s=>{
+      s.departments.forEach(d=>{
+        d.employees.forEach(emp=>{
+          items.push({company:c.name, subdivision:s.name, department:d.name, employee:emp});
+        });
+      });
+    });
+  });
+  return items;
+}
+
+/* render employees list */
+function renderEmployees(){
+  const list = document.getElementById('employeesList'); list.innerHTML='';
+  const items = buildEmployeeIndex();
+  const fC = document.getElementById('fCompany').value;
+  const fS = document.getElementById('fSubdivision').value;
+  const fD = document.getElementById('fDepartment').value;
+  const fE = document.getElementById('fEmployee').value;
+
+  const filtered = items.filter(it=>{
+    if(fC && it.company !== fC) return false;
+    if(fS && it.subdivision !== fS) return false;
+    if(fD && it.department !== fD) return false;
+    if(fE && it.employee !== fE) return false;
+    return true;
+  });
+
+  filtered.forEach(it=>{
+    const div = document.createElement('div'); div.className='employee-card';
+    const top = document.createElement('div'); top.className='employee-top';
+    const title = document.createElement('div'); title.innerHTML = `<strong>${esc(it.employee)}</strong><div class="small-muted">${esc(it.department)} • ${esc(it.subdivision)}</div>`;
+    const actions = document.createElement('div');
+    const viewBtn = document.createElement('button'); viewBtn.className='btn ghost'; viewBtn.textContent='Открыть'; viewBtn.onclick = ()=> showEmployeeCard(it);
+    actions.appendChild(viewBtn);
+    top.appendChild(title); top.appendChild(actions);
+    div.appendChild(top);
+
+    // stats
+    const devs = state.devices.filter(d=> d.employee===it.employee && d.status==='Принято');
+    const wait = state.devices.filter(d=> d.employee===it.employee && d.status==='Ожидание IT');
+    const stat = document.createElement('div'); stat.className='small-muted';
+    stat.innerHTML = `Активных: <span class="badge badge-active">${devs.length}</span>  Ожиданий: <span class="badge badge-wait">${wait.length}</span>`;
+    div.appendChild(stat);
+    list.appendChild(div);
+  });
+}
+
+/* show employee card */
+function showEmployeeCard(it){
+  const view = document.getElementById('employeeView');
+  const devs = state.devices.filter(d=> d.employee===it.employee && d.status !== 'Заменено');
+  const waits = state.devices.filter(d=> d.employee===it.employee && d.status === 'Ожидание IT');
+  const root = document.createElement('div');
+  root.innerHTML = `<h3>${esc(it.employee)}</h3><div class="small-muted">${esc(it.company)} • ${esc(it.subdivision)} • ${esc(it.department)}</div><hr>`;
+  // active devices
+  const activeTitle = document.createElement('h4'); activeTitle.textContent = 'Оборудование (на балансе)';
+  root.appendChild(activeTitle);
+  const list = document.createElement('div'); list.className='list';
+  if(devs.length===0) list.innerHTML = '<div class="small-muted">Нет активного оборудования.</div>';
+  devs.forEach(d=>{
+    const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center';
+    row.innerHTML = `<div>${esc(d.name)} <span class="small-muted">(${esc(d.inv)})</span></div>`;
+    const actions = document.createElement('div');
+    if(currentUser && currentUser.role==='admin'){
+      const replaceBtn = document.createElement('button'); replaceBtn.className='btn ghost'; replaceBtn.textContent='Заменить'; replaceBtn.onclick = ()=> openReplaceModalForEmployee(it.employee, d.id);
+      actions.appendChild(replaceBtn);
+      const unassignBtn = document.createElement('button'); unassignBtn.className='btn ghost'; unassignBtn.textContent='Списать'; unassignBtn.onclick = ()=>{
+        if(!confirm('Списать устройство? (станет "Заменено")')) return;
+        d.status='Заменено'; d.date = nowISO();
+        state.reports.push({ date: nowISO(), company:d.company, employee:it.employee, action:'Списано (IT)', inv:d.inv, name:d.name, deviceId:d.id });
+        saveState(); renderAll(); showEmployeeCard(it);
+      };
+      actions.appendChild(unassignBtn);
+    }
+    row.appendChild(actions); list.appendChild(row);
+  });
+  root.appendChild(list);
+
+  // waiting
+  const waitTitle = document.createElement('h4'); waitTitle.textContent='Ожидающие заявки';
+  root.appendChild(waitTitle);
+  const wlist = document.createElement('div'); wlist.className='list';
+  if(waits.length===0) wlist.innerHTML = '<div class="small-muted">Нет заявок.</div>';
+  waits.forEach(d=>{
+    const r = document.createElement('div'); r.style.display='flex'; r.style.justifyContent='space-between'; r.style.alignItems='center';
+    r.innerHTML = `<div>${esc(d.name)} (${esc(d.inv)}) <span class="badge badge-wait">Ожидание IT</span></div>`;
+    const a = document.createElement('div');
+    if(currentUser && currentUser.role==='admin'){
+      const accept = document.createElement('button'); accept.className='btn'; accept.textContent='Принять'; accept.onclick = ()=>{
+        d.status='Принято'; d.date = nowISO();
+        state.reports.push({ date: nowISO(), company:d.company, employee:d.employee, action:'Принято IT', inv:d.inv, name:d.name, deviceId:d.id });
+        saveState(); renderAll(); showEmployeeCard(it);
+      };
+      a.appendChild(accept);
+      const replaceBtn = document.createElement('button'); replaceBtn.className='btn ghost'; replaceBtn.textContent='Заменить старое'; replaceBtn.onclick = ()=> openReplaceModalForEmployee(it.employee, null, d.id);
+      a.appendChild(replaceBtn);
+      const reject = document.createElement('button'); reject.className='btn ghost'; reject.textContent='Отклонить'; reject.onclick = ()=>{
+        if(!confirm('Отклонить заявку?')) return;
+        // move to pool if type pool, otherwise mark rejected (we'll remove it)
+        d.status = 'Pool'; d.employee = null; d.date = nowISO();
+        state.reports.push({ date: nowISO(), company:d.company, employee:it.employee, action:'Отклонено IT — перемещено в пул', inv:d.inv, name:d.name, deviceId:d.id });
+        saveState(); renderAll(); showEmployeeCard(it);
+      };
+      a.appendChild(reject);
+    } else {
+      a.innerHTML = '<div class="small-muted">Ожидает IT</div>';
+    }
+    r.appendChild(a); wlist.appendChild(r);
+  });
+  root.appendChild(wlist);
+
+  // actions for бухгалтер
+  const actionsDiv = document.createElement('div'); actionsDiv.style.marginTop='10px';
+  if(currentUser && currentUser.role==='buh'){
+    const assignBtn = document.createElement('button'); assignBtn.className='btn'; assignBtn.textContent='Назначить устройство из пула';
+    assignBtn.onclick = ()=> {
+      document.querySelector('.tab[data-tab="tabAdd"]').click();
+      document.getElementById('assignCompany').value = it.company; document.getElementById('assignCompany').dispatchEvent(new Event('change'));
+      setTimeout(()=> {
+        refreshAssignDevices();
+        document.getElementById('assignDept').value = it.department; document.getElementById('assignDept').dispatchEvent(new Event('change'));
+        document.getElementById('assignEmp').value = it.employee;
+      },120);
+    };
+    actionsDiv.appendChild(assignBtn);
+
+    const fireBtn = document.createElement('button'); fireBtn.className='btn ghost'; fireBtn.style.marginLeft='8px'; fireBtn.textContent='Создать заявку: увольнение (IT подтверждает)';
+    fireBtn.onclick = ()=>{
+      if(!confirm(`Создать заявку на увольнение ${it.employee}? IT подтвердит перевод устройств в пул.`)) return;
+      // create "Увольнение" report: we'll add a special request item (not a device) — but we need to move devices only after IT confirms
+      const activeDevs = state.devices.filter(d=> d.employee===it.employee && d.status==='Принято');
+      // mark a "firing" request entry in reports with meta containing deviceIds
+      const req = { date: nowISO(), company: it.company, employee: it.employee, action: 'Заявка: Увольнение (Ожидание IT)', inv:'', name:'', deviceId:null, meta:{ type:'firing', devices: activeDevs.map(d=>d.id) } };
+      state.reports.push(req);
+      saveState(); renderAll(); alert('Заявка на увольнение создана — IT подтвердит перевод устройств в пул.');
+    };
+    actionsDiv.appendChild(fireBtn);
+  }
+  root.appendChild(actionsDiv);
+
+  view.innerHTML=''; view.appendChild(root);
+}
+
+/* add device (buh) */
+document.getElementById('addCreateBtn').addEventListener('click', ()=> {
+  const company = document.getElementById('addCompany').value;
+  const subdivision = document.getElementById('addSubdivision').value;
+  const department = document.getElementById('addDepartment').value;
+  const employee = document.getElementById('addEmployee').value;
+  const type = document.getElementById('addType').value; // new / pool
+  const inv = document.getElementById('addInv').value.trim();
+  const name = document.getElementById('addName').value.trim();
+  if(!company || !subdivision || !department) return alert('Выберите компанию / подразделение / отдел.');
+  if(type === 'new' && !employee) return alert('Выберите сотрудника для назначаемого нового устройства.');
+  if(!inv || !name) return alert('Введите инвентарный номер и название.');
+  if(state.devices.some(d=> d.inv === inv)) return alert('Инвентарный номер уже существует.');
+  const dev = { id: uid(), company, subdivision, department, employee: type==='pool' ? null : employee, inv, name, status: type==='pool' ? 'Pool' : 'Ожидание IT', date: nowISO(), replacedOfId: null, type: type==='pool' ? 'pool' : 'new' };
+  state.devices.push(dev);
+  state.reports.push({ date: nowISO(), company, employee: employee || '', action: type==='pool' ? 'Добавлено в пул' : 'Добавлена заявка (Ожидание IT)', inv, name, deviceId: dev.id });
+  saveState(); renderAll();
+  alert(type==='pool' ? 'Устройство добавлено в пул.' : 'Заявка создана и ожидает IT.');
+  // clear inputs
+  document.getElementById('addInv').value=''; document.getElementById('addName').value='';
+});
+
+/* assign from pool (buh) — creates a request (Ожидание IT) */
+document.getElementById('assignBtn').addEventListener('click', ()=> {
+  const devId = document.getElementById('assignDevice').value;
+  const comp = document.getElementById('assignCompany').value;
+  const dept = document.getElementById('assignDept').value;
+  const emp = document.getElementById('assignEmp').value;
+  if(!devId) return alert('Выберите устройство из пула.');
+  if(!dept || !emp) return alert('Выберите отдел и сотрудника.');
+  const dev = state.devices.find(d=> d.id === devId);
+  if(!dev) return alert('Устройство не найдено.');
+  // mark device as waiting and assign target employee in device (so we know to whom)
+  dev.department = dept; dev.employee = emp; dev.status = 'Ожидание IT'; dev.date = nowISO();
+  state.reports.push({ date: nowISO(), company: comp, employee: emp, action: 'Назначено бухгалтером (Ожидание IT)', inv: dev.inv, name: dev.name, deviceId: dev.id });
+  saveState(); renderAll(); alert('Устройство назначено и ожидает подтверждения IT.');
+});
+
+/* refresh assign device list */
+function refreshAssignDevices(){
+  const comp = document.getElementById('assignCompany').value;
+  const sel = document.getElementById('assignDevice'); sel.innerHTML = '<option value="">--</option>';
+  const pool = state.devices.filter(d=> d.status === 'Pool' && (!comp || d.company === comp));
+  pool.forEach(d=> { const o = document.createElement('option'); o.value=d.id; o.textContent = `${d.name} (${d.inv}) — ${d.company}`; sel.appendChild(o); });
+}
+
+/* IT: render waiting table (requests) */
+function renderIT(){
+  const tbody = document.querySelector('#itTable tbody'); tbody.innerHTML = '';
+  // Waiting devices
+  const waitingDevices = state.devices.filter(d=> d.status === 'Ожидание IT');
+  waitingDevices.forEach(d=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${esc(d.type==='new'?'Новое':'Назначение')}</td><td>${esc(d.company)}</td><td>${esc(d.subdivision)}</td><td>${esc(d.department)}</td><td>${esc(d.employee||'')}</td><td>${esc(d.inv)}</td><td>${esc(d.name)}</td>
+      <td>
+        <button class="btn" data-id="${d.id}" data-action="accept">Принять</button>
+        <button class="btn ghost" data-id="${d.id}" data-action="replace">Заменить</button>
+        <button class="btn ghost" data-id="${d.id}" data-action="toPool">Переместить в пул</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Also render special reports requests: firing requests (we use reports with meta.type==='firing' and not processed)
+  const firingRequests = state.reports.filter(r=> r.meta && r.meta.type==='firing' && !r.meta.processed);
+  firingRequests.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>Увольнение</td><td>${esc(r.company)}</td><td>-</td><td>-</td><td>${esc(r.employee)}</td><td>—</td><td>Уволить — подтвердить перевод устройств в пул</td>
+      <td>
+        <button class="btn" data-req="${state.reports.indexOf(r)}" data-action="firingApprove">Подтвердить</button>
+        <button class="btn ghost" data-req="${state.reports.indexOf(r)}" data-action="firingReject">Отклонить</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  // listeners
+  tbody.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+      const reqIndex = btn.dataset.req;
+      if(action === 'accept'){
+        const d = state.devices.find(x=> x.id === id);
+        if(!d) return alert('Устройство не найдено.');
+        d.status = 'Принято'; d.date = nowISO();
+        state.reports.push({ date: nowISO(), company:d.company, employee:d.employee||'', action:'Принято IT', inv:d.inv, name:d.name, deviceId:d.id });
+        saveState(); renderAll(); alert('Устройство принято IT.');
+      } else if(action === 'replace'){
+        const d = state.devices.find(x=> x.id === id);
+        if(!d) return alert('Устройство не найдено.');
+        // replace modal open — pass target employee from d.employee
+        openReplaceModalForEmployee(d.employee || '', null, id);
+      } else if(action === 'toPool'){
+        const d = state.devices.find(x=> x.id === id);
+        if(!d) return alert('Устройство не найдено.');
+        d.status = 'Pool'; d.employee = null; d.date = nowISO();
+        state.reports.push({ date: nowISO(), company:d.company, employee:'', action:'Перемещено в пул (IT)', inv:d.inv, name:d.name, deviceId:d.id });
+        saveState(); renderAll(); alert('Устройство перемещено в пул.');
+      } else if(action === 'firingApprove'){
+        const repIdx = Number(reqIndex);
+        const req = state.reports[repIdx];
+        if(!req || !req.meta || req.meta.type!=='firing') return alert('Заявка не найдена.');
+        // move devices to pool
+        (req.meta.devices||[]).forEach(devId=>{
+          const d = state.devices.find(x=> x.id === devId);
+          if(d){ d.employee = null; d.status = 'Pool'; d.date = nowISO(); state.reports.push({ date: nowISO(), company:d.company, employee:req.employee, action:'Уволен — устройство в пул (IT подтверждение)', inv:d.inv, name:d.name, deviceId:d.id }); }
+        });
+        req.meta.processed = true;
+        req.action = 'Заявка: Увольнение (Подтверждена IT)';
+        saveState(); renderAll(); alert('Увольнение подтверждено — устройства переведены в пул.');
+      } else if(action === 'firingReject'){
+        const repIdx = Number(reqIndex);
+        const req = state.reports[repIdx];
+        if(!req || !req.meta || req.meta.type!=='firing') return alert('Заявка не найдена.');
+        req.meta.processed = true;
+        req.action = 'Заявка: Увольнение (Отклонена IT)';
+        saveState(); renderAll(); alert('Заявка на увольнение отклонена.');
+      }
+    });
+  });
+}
+
+/* Replace modal logic */
+function openReplaceModalForEmployee(employeeName, oldDeviceId=null, newDeviceId=null){
+  const modal = document.getElementById('modalReplace');
+  modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
+  document.getElementById('modalReplaceEmployee').textContent = employeeName || '(не указан)';
+  // new select: waiting devices
+  const newSel = document.getElementById('modalNew'); newSel.innerHTML = '<option value="">--</option>';
+  state.devices.filter(d=> d.status === 'Ожидание IT').forEach(d=> {
+    const o = document.createElement('option'); o.value=d.id; o.textContent = `${d.name} (${d.inv}) — ${d.company}`;
+    newSel.appendChild(o);
+  });
+  if(newDeviceId) newSel.value = newDeviceId;
+  // old select: accepted devices for employee
+  const oldSel = document.getElementById('modalOld'); oldSel.innerHTML = '<option value="">--</option>';
+  state.devices.filter(d=> d.employee === employeeName && d.status === 'Принято').forEach(d=>{
+    const o = document.createElement('option'); o.value=d.id; o.textContent = `${d.name} (${d.inv})`; oldSel.appendChild(o);
+  });
+  if(oldDeviceId) oldSel.value = oldDeviceId;
+}
+
+/* confirm replacement */
+document.getElementById('modalReplaceConfirm').addEventListener('click', ()=>{
+  const newId = document.getElementById('modalNew').value;
+  const oldId = document.getElementById('modalOld').value;
+  if(!newId || !oldId) return alert('Выберите новое и старое устройство.');
+  const newDev = state.devices.find(d=> d.id===newId);
+  const oldDev = state.devices.find(d=> d.id===oldId);
+  if(!newDev || !oldDev) return alert('Устройства не найдены.');
+  // apply replacement
+  oldDev.status = 'Заменено'; oldDev.date = nowISO();
+  newDev.status = 'Принято'; newDev.replacedOfId = oldDev.id; newDev.date = nowISO();
+  newDev.employee = oldDev.employee; // transfer to that employee
+  state.reports.push({ date: nowISO(), company:newDev.company, employee:newDev.employee, action:'Заменено (IT)', inv:newDev.inv, name:newDev.name, deviceId:newDev.id, meta:{ oldInv: oldDev.inv, oldName: oldDev.name }});
+  saveState(); closeReplaceModal(); renderAll();
+  alert('Замена выполнена: старое списано, новое принято.');
+});
+document.getElementById('modalReplaceCancel').addEventListener('click', closeReplaceModal);
+function closeReplaceModal(){ const m=document.getElementById('modalReplace'); m.classList.remove('show'); m.setAttribute('aria-hidden','true'); }
+
+/* pool render */
+function renderPool(){
+  const comp = document.getElementById('poolCompany').value;
+  const tbody = document.querySelector('#poolTable tbody'); tbody.innerHTML = '';
+  const pool = state.devices.filter(d=> d.status === 'Pool' && (!comp || d.company === comp));
+  pool.forEach(d=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${esc(d.inv)}</td><td>${esc(d.name)}</td><td>${esc(d.company)}</td>
+      <td>
+        <button class="btn ghost" data-id="${d.id}" data-action="quickAssign">Назначить</button>
+        <button class="btn" data-id="${d.id}" data-action="editPool">Редактировать</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=> {
+      const id = btn.dataset.id;
+      const act = btn.dataset.action;
+      if(act === 'quickAssign'){
+        const dev = state.devices.find(d=> d.id===id);
+        document.querySelector('.tab[data-tab="tabAdd"]').click();
+        document.getElementById('assignCompany').value = dev.company; document.getElementById('assignCompany').dispatchEvent(new Event('change'));
+        setTimeout(()=> { refreshAssignDevices(); document.getElementById('assignDevice').value = id; },120);
+        alert('Устройство выбрано в форме назначения.');
+      } else if(act === 'editPool'){
+        alert('Редактирование в демо ограничено; можно списать через IT или назначить через форму.');
+      }
+    });
+  });
+}
+
+/* reports render */
+function renderReports(){
+  const tbody = document.querySelector('#reportsTable tbody'); tbody.innerHTML = '';
+  state.reports.slice().reverse().forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${formatDate(r.date)}</td><td>${esc(r.company||'')}</td><td>${esc(r.employee||'')}</td><td>${esc(r.action||'')}</td><td>${esc(r.inv||'')}</td><td>${esc(r.name||'')}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* render all */
+function renderAll(){
+  initSelectors();
+  renderEmployees();
+  renderIT();
+  renderPool();
+  renderReports();
+  refreshAssignDevices();
+}
+
+/* export CSV */
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  let csv = 'Дата;Компания;Сотрудник;Действие;Инв.;Название\n';
+  state.reports.forEach(r=> csv += `${formatDate(r.date)};${(r.company||'')};${(r.employee||'')};${(r.action||'')};${(r.inv||'')};${(r.name||'')}\n`);
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'reports.csv'; a.click(); URL.revokeObjectURL(url);
+});
+
+/* quick refresh */
+document.getElementById('btnRefresh').addEventListener('click', ()=>{ renderAll(); alert('Обновлено'); });
+document.getElementById('filterApply').addEventListener('click', ()=> renderEmployees());
+document.getElementById('filterClear').addEventListener('click', ()=> {
+  document.getElementById('fCompany').value=''; document.getElementById('fSubdivision').innerHTML='<option value="">--</option>';
+  document.getElementById('fDepartment').innerHTML='<option value="">--</option>'; document.getElementById('fEmployee').innerHTML='<option value="">--</option>';
+  renderEmployees();
+});
+
+/* ===== Add employee modal logic (бух) ===== */
+document.getElementById('btnAddEmployeeOpen').addEventListener('click', ()=>{
+  document.getElementById('modalAddEmployee').classList.add('show'); document.getElementById('modalAddEmployee').setAttribute('aria-hidden','false');
+  fillSelect('newCompany', state.companies.map(c=>c.name));
+});
+document.getElementById('modalAddEmployeeCancel').addEventListener('click', ()=> closeAddEmployeeModal());
+function closeAddEmployeeModal(){ const m=document.getElementById('modalAddEmployee'); m.classList.remove('show'); m.setAttribute('aria-hidden','true'); }
+
+document.getElementById('modalAddEmployeeConfirm').addEventListener('click', ()=>{
+  const company = document.getElementById('newCompany').value;
+  const subdivision = document.getElementById('newSubdivision').value.trim();
+  const department = document.getElementById('newDepartment').value.trim();
+  const name = document.getElementById('newEmployeeName').value.trim();
+  const pos = document.getElementById('newEmployeePos').value.trim();
+  if(!company || !subdivision || !department || !name) return alert('Заполните все поля.');
+  let comp = state.companies.find(c=> c.name === company);
+  if(!comp){ comp = { name:company, subdivisions:[] }; state.companies.push(comp); }
+  let sub = comp.subdivisions.find(s=> s.name === subdivision);
+  if(!sub){ sub = { name:subdivision, departments:[] }; comp.subdivisions.push(sub); }
+  let dept = sub.departments.find(d=> d.name === department);
+  if(!dept){ dept = { name:department, employees:[] }; sub.departments.push(dept); }
+  if(dept.employees.includes(name)) return alert('Сотрудник уже существует.');
+  dept.employees.push(name);
+  state.reports.push({ date: nowISO(), company, employee:name, action:'Добавлен сотрудник (Бухгалтер)', inv:'', name:'', deviceId:null });
+  saveState(); closeAddEmployeeModal(); initSelectors(); renderAll(); alert('Сотрудник добавлен.');
+  document.getElementById('newSubdivision').value=''; document.getElementById('newDepartment').value=''; document.getElementById('newEmployeeName').value=''; document.getElementById('newEmployeePos').value='';
+});
+
+/* initial fill */
+initSelectors(); renderAll();
+</script>
+</body>
+</html>

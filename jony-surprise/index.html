@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>JONY Atmosphere ✨</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+min-height:100vh;
+overflow-x:hidden;
+color:white;
+background:
+radial-gradient(circle at top,#7c3aed 0%,#111827 40%,#020617 100%);
+position:relative;
+}
+
+/* animated glow */
+
+body::before,
+body::after{
+content:'';
+position:fixed;
+width:500px;
+height:500px;
+border-radius:50%;
+filter:blur(120px);
+z-index:-1;
+animation:moveGlow 10s infinite alternate ease-in-out;
+}
+
+body::before{
+background:#ec4899;
+top:-100px;
+left:-100px;
+opacity:.18;
+}
+
+body::after{
+background:#8b5cf6;
+bottom:-100px;
+right:-100px;
+opacity:.18;
+}
+
+@keyframes moveGlow{
+from{
+transform:translate(0,0);
+}
+to{
+transform:translate(40px,-30px);
+}
+}
+
+/* floating stars */
+
+.star{
+position:fixed;
+opacity:.12;
+pointer-events:none;
+animation:fly linear infinite;
+}
+
+@keyframes fly{
+from{
+transform:translateY(100vh);
+}
+to{
+transform:translateY(-120px);
+}
+}
+
+/* container */
+
+.container{
+width:92%;
+max-width:1200px;
+margin:auto;
+padding:40px 15px;
+text-align:center;
+}
+
+.title{
+font-size:42px;
+font-weight:800;
+margin-bottom:20px;
+background:
+linear-gradient(
+90deg,
+#fff,
+#ff9ed8,
+#c084fc
+);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.subtitle{
+font-size:18px;
+line-height:2;
+color:#d6d6d6;
+max-width:720px;
+margin:auto;
+margin-bottom:40px;
+}
+
+/* PHOTO */
+
+.photo-wrapper{
+display:flex;
+justify-content:center;
+margin-bottom:30px;
+}
+
+.photo-card{
+position:relative;
+width:100%;
+max-width:420px;
+height:580px;
+overflow:hidden;
+border-radius:42px;
+
+background:
+rgba(255,255,255,.06);
+
+backdrop-filter:blur(30px);
+
+border:1px solid
+rgba(255,255,255,.12);
+
+box-shadow:
+0 0 70px rgba(236,72,153,.18),
+0 0 120px rgba(139,92,246,.10);
+
+transition:.5s;
+}
+
+.photo-card:hover{
+transform:translateY(-6px);
+}
+
+.slide-bg{
+position:absolute;
+inset:0;
+background-size:cover;
+background-position:center;
+filter:blur(45px);
+transform:scale(1.3);
+opacity:0;
+transition:1s;
+}
+
+.slide-bg.active{
+opacity:.28;
+}
+
+.slide-front{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:90%;
+height:90%;
+object-fit:contain;
+border-radius:35px;
+
+opacity:0;
+transition:1s;
+
+box-shadow:
+0 0 50px rgba(255,105,180,.18);
+}
+
+.slide-front.active{
+opacity:1;
+}
+
+.playing{
+font-size:22px;
+margin-top:20px;
+font-weight:700;
+color:#ffb6dc;
+}
+
+/* playlist */
+
+.music-title{
+font-size:32px;
+margin-top:50px;
+margin-bottom:25px;
+}
+
+.music-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:22px;
+}
+
+/* wow music cards */
+
+.music-card{
+position:relative;
+overflow:hidden;
+cursor:pointer;
+
+border-radius:32px;
+
+background:
+rgba(255,255,255,.08);
+
+border:1px solid
+rgba(255,255,255,.08);
+
+backdrop-filter:blur(30px);
+
+transition:.35s;
+}
+
+.music-card:hover{
+transform:
+translateY(-10px)
+scale(1.03);
+
+box-shadow:
+0 0 45px rgba(236,72,153,.28);
+}
+
+.music-cover{
+width:100%;
+height:200px;
+object-fit:cover;
+display:block;
+}
+
+/* overlay */
+
+.music-card::after{
+content:'▶ PLAY';
+position:absolute;
+top:15px;
+right:15px;
+
+padding:10px 16px;
+border-radius:18px;
+
+background:
+rgba(0,0,0,.45);
+
+backdrop-filter:blur(20px);
+
+font-size:13px;
+font-weight:700;
+letter-spacing:1px;
+}
+
+.music-info{
+padding:18px;
+text-align:left;
+}
+
+.song-name{
+font-size:20px;
+font-weight:700;
+margin-bottom:7px;
+}
+
+.artist{
+font-size:14px;
+color:#cfcfcf;
+}
+
+.play-btn{
+display:none;
+}
+
+.footer{
+margin-top:50px;
+padding-bottom:60px;
+font-size:18px;
+color:#cbd5e1;
+line-height:1.8;
+}
+
+/* mobile */
+
+@media(max-width:700px){
+
+.title{
+font-size:34px;
+}
+
+.photo-card{
+height:520px;
+}
+
+.music-grid{
+grid-template-columns:
+1fr 1fr;
+gap:14px;
+}
+
+.music-cover{
+height:150px;
+}
+
+.song-name{
+font-size:16px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="glow glow1"></div>
+<div class="glow glow2"></div>
+
+<div class="container">
+
+<h1 class="title">
+ Кішкентай атмосфера ✨
+</h1>
+
+<p class="subtitle">
+Бұл JONY концерті емес екенін білемін 🎶 <br>
+Бірақ сізге кішкентай ерекше атмосфера ұнап қалар
+</p>
+
+<div class="photo-wrapper">
+
+<div class="photo-card">
+
+<div class="slide-bg active"
+style="background-image:url('photo1.jpg')"></div>
+
+<div class="slide-bg"
+style="background-image:url('photo2.jpg')"></div>
+
+<div class="slide-bg"
+style="background-image:url('photo3.jpg')"></div>
+
+<div class="slide-bg"
+style="background-image:url('photo4.jpg')"></div>
+
+<img src="photo1.jpg"
+class="slide-front active">
+
+<img src="photo2.jpg"
+class="slide-front">
+
+<img src="photo3.jpg"
+class="slide-front">
+
+<img src="photo4.jpg"
+class="slide-front">
+
+</div>
+
+</div>
+
+<div class="playing"
+id="playing">
+🎧 Қазір ойнап тұрған ән жоқ
+</div>
+
+<h2 class="music-title">
+🎶 JONY Playlist
+</h2>
+
+<div class="music-grid">
+
+
+    <!-- MUSIC CARDS -->
+
+<div class="music-card"
+onclick="playSong('Jony - Комета.mp3','Комета')">
+
+<img src="cover1.jpg"
+class="music-cover">
+
+<div class="music-info">
+
+<div class="song-name">
+Комета 🎵
+</div>
+
+<div class="artist">
+JONY
+</div>
+
+<div class="play-btn">
+▶ PLAY
+</div>
+
+</div>
+</div>
+
+<div class="music-card"
+onclick="playSong('Jony - Аллея.mp3','Аллея')">
+
+<img src="cover2.jpg"
+class="music-cover">
+
+<div class="music-info">
+
+<div class="song-name">
+Аллея 🎵
+</div>
+
+<div class="artist">
+JONY
+</div>
+
+<div class="play-btn">
+▶ PLAY
+</div>
+
+</div>
+</div>
+
+<div class="music-card"
+onclick="playSong('JONY - Ты Беспощадна.mp3','Ты Беспощадна')">
+
+<img src="cover3.jpg"
+class="music-cover">
+
+<div class="music-info">
+
+<div class="song-name">
+Ты Беспощадна 🎵
+</div>
+
+<div class="artist">
+JONY
+</div>
+
+<div class="play-btn">
+▶ PLAY
+</div>
+
+</div>
+</div>
+
+<div class="music-card"
+onclick="playSong('Jony - Love Your Voice.mp3','Love Your Voice')">
+
+<img src="cover4.jpg"
+class="music-cover">
+
+<div class="music-info">
+
+<div class="song-name">
+Love Your Voice 🎵
+</div>
+
+<div class="artist">
+JONY
+</div>
+
+<div class="play-btn">
+▶ PLAY
+</div>
+
+</div>
+</div>
+
+<div class="music-card"
+onclick="playSong('Jony - Лали.mp3','Лали')">
+
+<img src="cover5.jpg"
+class="music-cover">
+
+<div class="music-info">
+
+<div class="song-name">
+Лали 🎵
+</div>
+
+<div class="artist">
+JONY
+</div>
+
+<div class="play-btn">
+▶ PLAY
+</div>
+
+</div>
+</div>
+
+<div class="music-card"
+onclick="playSong('Emin & JONY - Камин.mp3','Камин')">
+
+<img src="cover6.jpg"
+class="music-cover">
+
+<div class="music-info">
+
+<div class="song-name">
+Камин 🎵
+</div>
+
+<div class="artist">
+EMIN & JONY
+</div>
+
+<div class="play-btn">
+▶ PLAY
+</div>
+
+</div>
+</div>
+
+<div class="music-card"
+onclick="playSong('HammAli & Navai feat. Jony - Без Тебя Я Не Я.mp3','Без Тебя Я Не Я')">
+
+<img src="cover7.jpg"
+class="music-cover">
+
+<div class="music-info">
+
+<div class="song-name">
+Без Тебя Я Не Я 🎵
+</div>
+
+<div class="artist">
+JONY
+</div>
+
+<div class="play-btn">
+▶ PLAY
+</div>
+
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+Кейде бір жақсы ән <br>
+көңіл-күйді өзгертіп жібереді 🎧
+</div>
+
+</div>
+
+<audio id="audio"></audio>
+
+<script>
+
+/* MUSIC */
+
+let audio=document.getElementById("audio");
+
+function playSong(file,name){
+
+audio.pause();
+audio.src=file;
+audio.play();
+
+document.getElementById("playing")
+.innerHTML=
+"🎧 Қазір ойнап тұр: "+name;
+
+}
+
+/* PHOTO SLIDER */
+
+const bgSlides=
+document.querySelectorAll(".slide-bg");
+
+const frontSlides=
+document.querySelectorAll(".slide-front");
+
+let index=0;
+
+setInterval(()=>{
+
+bgSlides[index]
+.classList.remove("active");
+
+frontSlides[index]
+.classList.remove("active");
+
+index=
+(index+1)
+%frontSlides.length;
+
+bgSlides[index]
+.classList.add("active");
+
+frontSlides[index]
+.classList.add("active");
+
+},3500);
+
+/* floating particles */
+
+for(let i=0;i<45;i++){
+
+let star=
+document.createElement("div");
+
+star.className="star";
+
+star.innerHTML="✦";
+
+star.style.left=
+Math.random()*100+"vw";
+
+star.style.fontSize=
+(Math.random()*20+8)+"px";
+
+star.style.animationDuration=
+(Math.random()*8+5)+"s";
+
+document.body.appendChild(star);
+
+}
+
+</script>
+
+</body>
+</html>
